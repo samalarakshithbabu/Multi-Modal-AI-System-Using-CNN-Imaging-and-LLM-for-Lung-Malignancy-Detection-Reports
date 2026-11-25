@@ -13,7 +13,7 @@ class Config:
     """Base configuration class"""
     
     # Flask Configuration
-    SECRET_KEY = os.getenv('FLASK_SECRET_KEY', 'dev-secret-key-change-in-production')
+    SECRET_KEY = os.getenv('FLASK_SECRET_KEY')
     DEBUG = False
     TESTING = False
     

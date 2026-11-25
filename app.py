@@ -12,7 +12,10 @@ from database import db, User, OTP, init_db, normalize_mobile_number
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv('FLASK_SECRET_KEY', 'your-secret-key-here')
+_secret = os.getenv('FLASK_SECRET_KEY')
+if not _secret:
+    raise RuntimeError("FLASK_SECRET_KEY environment variable is required")
+app.secret_key = _secret
 
 # Database Configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
@@ -397,4 +400,4 @@ def predict():
 if __name__ == '__main__':
     # Create upload directory if it doesn't exist
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=os.getenv('FLASK_DEBUG', '0') == '1', host='0.0.0.0', port=5000)

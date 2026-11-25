@@ -1,6 +1,16 @@
 # Enhanced Clinical-Grade Lung Cancer Classifier
 
+**Repository Name:** Multi-Modal-AI-System-Using-CNN-Imaging-and-LLM-for-Lung-Malignancy-Detection-Reports (kept per user request)
+
 A production-ready deep learning application for lung cancer classification using EfficientNet-B4, Flask, and PyTorch.
+
+---
+
+## Problem Statement
+
+Lung cancer diagnosis requires expert radiologist interpretation of CT scans. This system provides AI-assisted classification into 4 categories with automated medical report generation for clinical decision support.
+
+**⚠️ Disclaimer:** This AI system is designed to assist healthcare professionals, not replace them. All predictions must be validated by qualified medical practitioners before any clinical decisions are made. Not intended for clinical use without proper validation and regulatory approval.
 
 ## Features
 
@@ -10,6 +20,7 @@ A production-ready deep learning application for lung cancer classification usin
 - **User Authentication**: SQLite database with secure password hashing
 - **Medical Reports**: GPT-powered comprehensive medical reports (with fallback)
 - **Performance Metrics**: Detailed model evaluation and visualization
+- **Grad-CAM Visualization**: Model interpretability for clinical review
 
 ## Project Structure
 
@@ -39,14 +50,12 @@ lung-cancer-classifier/
 ## Installation
 
 ### 1. Clone Repository
-
 ```bash
-git clone <repository-url>
-cd lung-cancer-classifier
+git clone https://github.com/samalarakshithbabu/Multi-Modal-AI-System-Using-CNN-Imaging-and-LLM-for-Lung-Malignancy-Detection-Reports.git
+cd Multi-Modal-AI-System-Using-CNN-Imaging-and-LLM-for-Lung-Malignancy-Detection-Reports
 ```
 
 ### 2. Create Virtual Environment
-
 ```bash
 # Windows
 python -m venv venv
@@ -58,15 +67,12 @@ source venv/bin/activate
 ```
 
 ### 3. Install Dependencies
-
 ```bash
 pip install -r requirements.txt
 ```
 
 ### 4. Configure Environment Variables
-
-Create a `.env` file in the project root:
-
+Create `.env` file in project root:
 ```env
 # Flask Configuration
 FLASK_SECRET_KEY=your-secret-key-here-change-this
@@ -84,22 +90,14 @@ FLASK_ENV=development
 ## Dataset Setup
 
 ### Step 1: Fix Dataset Folder Names
-
-If your training folders have extended names (e.g., `adenocarcinoma_left.lower.lobe_T2_N0_M0_Ib`), run the renaming script:
-
+If your training folders have extended names (e.g., `adenocarcinoma_left.lower.lobe_T2_N0_M0_Ib`):
 ```bash
 python fix_dataset_names.py
 ```
-
-This will:
-- Rename training/validation folders to match test folder structure
-- Map extended names to base cancer types
-- Verify dataset consistency
+This will rename folders to match test folder structure and map extended names to base cancer types.
 
 ### Step 2: Verify Dataset Structure
-
 Ensure your dataset follows this structure:
-
 ```
 DATASET/
 ├── train/
@@ -122,59 +120,50 @@ DATASET/
 ## Training the Model
 
 ### Quick Start Training
-
 ```bash
 python train_model.py
 ```
 
 ### Training Features
-
 - **Transfer Learning**: Pre-trained EfficientNet-B4
-- **Focal Loss**: Handles class imbalance
-- **AdamW Optimizer**: Better generalization
+- **Focal Loss**: Handles class imbalance (α=1, γ=2)
+- **AdamW Optimizer**: Better generalization (weight decay 0.01)
 - **Learning Rate Scheduling**: ReduceLROnPlateau
-- **Early Stopping**: Prevents overfitting
+- **Early Stopping**: Patience of 5 epochs
 - **Automatic Checkpointing**: Saves best model
 
 ### Training Configuration
-
 Edit `train_model.py` to customize:
-
 ```python
 config = {
     'epochs': 30,
     'batch_size': 16,
     'learning_rate': 0.001,
     'weight_decay': 0.01,
-    'patience': 5,  # Early stopping
+    'patience': 5,
 }
 ```
 
 ### Training Output
-
 - Model saved to: `models/best_model.pth`
 - Confusion matrix: `confusion_matrix.png`
 - Training logs: `training_YYYYMMDD_HHMMSS.log`
+- Accuracy curves: `accuracy_curve.png`, `loss_curve.png`
+- Class-wise accuracy: `class_wise_accuracy.png`, `cancer_accuracy_barplot.png`
 
 ## Running the Application
 
 ### 1. Initialize Database
-
-The database is automatically created on first run with a default user:
-
-- Username: `rakshith`
-- Password: `Rakshith@21`
+Database auto-created on first run. No default user is created.
+Register a new account via the registration page on first access.
 
 ### 2. Start Flask Server
-
 ```bash
 python app.py
 ```
-
-The application will be available at: `http://localhost:5000`
+Application available at: `http://localhost:5000`
 
 ### 3. Access the Application
-
 1. Open browser to `http://localhost:5000`
 2. Login with credentials or register new account
 3. Upload CT scan images for prediction
@@ -183,21 +172,18 @@ The application will be available at: `http://localhost:5000`
 ## Features Guide
 
 ### User Authentication
-
 - **Registration**: Create new user accounts
 - **Login**: Secure password-based authentication
 - **Password Reset**: OTP-based password recovery
 - **Session Management**: Secure session handling
 
 ### Prediction
-
 1. Navigate to Prediction page
 2. Upload CT scan image (PNG, JPG, JPEG)
 3. View classification results with confidence scores
 4. Download comprehensive medical report
 
 ### Performance Metrics
-
 - Overall accuracy
 - Per-class precision, recall, F1-score
 - Confusion matrix visualization
@@ -206,7 +192,6 @@ The application will be available at: `http://localhost:5000`
 ## API Endpoints
 
 ### Authentication
-
 - `POST /register` - Register new user
 - `POST /login` - User login
 - `GET /logout` - User logout
@@ -215,65 +200,12 @@ The application will be available at: `http://localhost:5000`
 - `POST /reset-password` - Reset password
 
 ### Prediction
-
 - `POST /predict` - Upload image and get prediction
 - `GET /performance` - View model performance metrics
-
-## Database Schema
-
-### Users Table
-
-```sql
-CREATE TABLE users (
-    id INTEGER PRIMARY KEY,
-    username VARCHAR(80) UNIQUE NOT NULL,
-    email VARCHAR(120) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    full_name VARCHAR(120) NOT NULL,
-    mobile VARCHAR(20) UNIQUE NOT NULL,
-    user_type VARCHAR(20) DEFAULT 'registered',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    last_login DATETIME
-);
-```
-
-### OTPs Table
-
-```sql
-CREATE TABLE otps (
-    id INTEGER PRIMARY KEY,
-    mobile VARCHAR(20) NOT NULL,
-    otp_code VARCHAR(6) NOT NULL,
-    username VARCHAR(80) NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    expires_at DATETIME NOT NULL,
-    is_used BOOLEAN DEFAULT FALSE
-);
-```
-
-## Configuration
-
-### Centralized Settings
-
-All configuration is managed in `config.py`:
-
-```python
-from config import get_config
-
-# Get configuration for current environment
-config = get_config('development')  # or 'production', 'testing'
-```
-
-### Environment-Specific Settings
-
-- **Development**: Debug mode, SQL logging enabled
-- **Production**: HTTPS required, optimized settings
-- **Testing**: In-memory database, CSRF disabled
 
 ## Model Architecture
 
 ### EfficientNet-B4
-
 - **Input Size**: 380x380 pixels
 - **Parameters**: ~19M
 - **Architecture**: Compound scaling (depth, width, resolution)
@@ -281,7 +213,6 @@ config = get_config('development')  # or 'production', 'testing'
 - **Custom Head**: 4-class classification layer
 
 ### Training Strategy
-
 1. **Data Augmentation**: Random flips, rotations, color jitter
 2. **Focal Loss**: α=1, γ=2 for class imbalance
 3. **Optimizer**: AdamW with weight decay 0.01
@@ -290,36 +221,16 @@ config = get_config('development')  # or 'production', 'testing'
 
 ## Troubleshooting
 
-### Common Issues
-
-**1. CUDA Out of Memory**
-```bash
-# Reduce batch size in train_model.py
-batch_size = 8  # or 4
-```
-
-**2. OpenAI API Errors**
-- Check API key in `.env`
-- Verify API quota
-- Application will use fallback reports automatically
-
-**3. Database Locked**
-```bash
-# Delete and recreate database
-rm users.db
-python app.py  # Will recreate automatically
-```
-
-**4. Model Not Found**
-```bash
-# Train model first
-python train_model.py
-```
+| Issue | Solution |
+|-------|----------|
+| CUDA Out of Memory | Reduce batch size in `train_model.py` to 8 or 4 |
+| OpenAI API Errors | Check API key in `.env`; fallback reports used automatically |
+| Database Locked | Delete `users.db` and restart `python app.py` |
+| Model Not Found | Train model first: `python train_model.py` |
 
 ## Production Deployment
 
 ### Security Checklist
-
 - [ ] Change `FLASK_SECRET_KEY` in `.env`
 - [ ] Set `FLASK_ENV=production`
 - [ ] Enable HTTPS
@@ -330,24 +241,28 @@ python train_model.py
 - [ ] Add CSRF protection
 
 ### Recommended Stack
-
 - **Web Server**: Gunicorn or uWSGI
 - **Reverse Proxy**: Nginx
 - **Database**: PostgreSQL
 - **Caching**: Redis
 - **Monitoring**: Prometheus + Grafana
 
+---
+
+## Author
+
+**SAMALA RAKSHITH BABU**  
+
+**Contact:**  
+- Email: samalarakshithbabu7@gmail.com  
+- LinkedIn: https://www.linkedin.com/in/samala-rakshith-babu/  
+- GitHub: https://github.com/samalarakshithbabu  
+
+---
+
 ## License
 
 This project is for educational and research purposes only. Not intended for clinical use without proper validation and regulatory approval.
-
-## Disclaimer
-
-⚠️ **IMPORTANT**: This AI system is designed to assist healthcare professionals, not replace them. All predictions must be validated by qualified medical practitioners before any clinical decisions are made.
-
-## Support
-
-For issues, questions, or contributions, please open an issue on the repository.
 
 ## Acknowledgments
 

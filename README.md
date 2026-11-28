@@ -1,272 +1,123 @@
-# Enhanced Clinical-Grade Lung Cancer Classifier
+# 💰 Flask Expense Tracker
 
-**Repository Name:** Multi-Modal-AI-System-Using-CNN-Imaging-and-LLM-for-Lung-Malignancy-Detection-Reports (kept per user request)
+<div align="center">
 
-A production-ready deep learning application for lung cancer classification using EfficientNet-B4, Flask, and PyTorch.
+![Python](https://img.shields.io/badge/python-3.8%2B-blue?logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-3.0-black?logo=flask)
+![SQLite](https://img.shields.io/badge/SQLite-Light-blue?logo=sqlite)
+![License](https://img.shields.io/badge/License-MIT-green)
+
+**Simple Personal Expense Tracking Web Application**
+
+[![View Demo](https://img.shields.io/badge/View-Demo-blue)]()
+[![Report Issue](https://img.shields.io/badge/Report-Issue-red)](https://github.com/samalarakshithbabu/flask-expense-tracker/issues)
+
+</div>
 
 ---
 
-## Problem Statement
+## 🚀 Executive Summary
 
-Lung cancer diagnosis requires expert radiologist interpretation of CT scans. This system provides AI-assisted classification into 4 categories with automated medical report generation for clinical decision support.
+A **simple and functional expense tracker web application** built with Flask and SQLite. Helps users manage personal expenses by adding, storing, and viewing records through a clean web interface and RESTful APIs.
 
-**⚠️ Disclaimer:** This AI system is designed to assist healthcare professionals, not replace them. All predictions must be validated by qualified medical practitioners before any clinical decisions are made. Not intended for clinical use without proper validation and regulatory approval.
+### What It Does
 
-## Features
-
-- **Deep Learning Model**: EfficientNet-B4 with transfer learning
-- **4-Class Classification**: Adenocarcinoma, Large Cell Carcinoma, Squamous Cell Carcinoma, Normal
-- **Web Interface**: Flask-based responsive UI
-- **User Authentication**: SQLite database with secure password hashing
-- **Medical Reports**: GPT-powered comprehensive medical reports (with fallback)
-- **Performance Metrics**: Detailed model evaluation and visualization
-- **Grad-CAM Visualization**: Model interpretability for clinical review
-
-## Project Structure
-
-```
-lung-cancer-classifier/
-├── app.py                          # Main Flask application
-├── config.py                       # Centralized configuration
-├── database.py                     # SQLAlchemy models
-├── predictor.py                    # Prediction engine
-├── model_trainer.py                # Training utilities
-├── train_model.py                  # Training script
-├── medical_report_generator.py     # Report generation
-├── data_preprocessor.py            # Data preprocessing
-├── fix_dataset_names.py            # Dataset folder renaming utility
-├── requirements.txt                # Python dependencies
-├── .env                            # Environment variables (create this)
-├── DATASET/                        # Dataset directory
-│   ├── train/                      # Training images
-│   ├── valid/                      # Validation images
-│   └── test/                       # Test images
-├── models/                         # Trained models
-│   └── best_model.pth             # Best model weights
-├── uploads/                        # Temporary upload directory
-└── templates/                      # HTML templates
+```mermaid
+graph LR
+    A[User] --> B[Web Form]
+    B --> C[Flask Backend]
+    C --> D[SQLite Database]
+    D --> C
+    C --> E[Display Expenses]
+    C --> F[REST API]
 ```
 
-## Installation
+---
 
-### 1. Clone Repository
+## ✨ Key Features
+
+| Feature | Description |
+|---------|-------------|
+| **Add Expenses** | Date, category, description, and amount |
+| **View Expenses** | Display all stored records |
+| **REST API** | JSON-based POST (add) and GET (fetch) |
+| **SQLite Persistence** | Auto-created local database |
+| **Jinja2 Templates** | Clean HTML form interface |
+
+---
+
+## 🛠️ Technology Stack
+
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| **Backend** | Python + Flask | Web framework |
+| **Database** | SQLite | Local persistence |
+| **Frontend** | HTML + Jinja2 | Templating |
+| **API** | JSON REST | Programmatic access |
+
+---
+
+## 📁 Project Structure
+
+```
+flask-expense-tracker/
+├── app.py              # Main Flask application
+├── expenses.db         # SQLite database (auto-created)
+├── templates/
+│   └── index.html      # HTML form for user input
+├── static/             # Optional CSS, images, JS
+└── README.md           # This file
+```
+
+---
+
+## 🛠️ Installation
+
+### Prerequisites
+- Python 3.8+
+- pip
+
+### Setup
 ```bash
-git clone https://github.com/samalarakshithbabu/Multi-Modal-AI-System-Using-CNN-Imaging-and-LLM-for-Lung-Malignancy-Detection-Reports.git
-cd Multi-Modal-AI-System-Using-CNN-Imaging-and-LLM-for-Lung-Malignancy-Detection-Reports
-```
-
-### 2. Create Virtual Environment
-```bash
-# Windows
-python -m venv venv
-venv\Scripts\activate
-
-# Linux/Mac
-python3 -m venv venv
-source venv/bin/activate
-```
-
-### 3. Install Dependencies
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Configure Environment Variables
-Create `.env` file in project root:
-```env
-# Flask Configuration
-FLASK_SECRET_KEY=your-secret-key-here-change-this
-
-# OpenAI API (Optional - for GPT-powered reports)
-OPENAI_API_KEY=your-openai-api-key-here
-
-# Database (Optional - defaults to SQLite)
-DATABASE_URL=sqlite:///users.db
-
-# Environment
-FLASK_ENV=development
-```
-
-## Dataset Setup
-
-### Step 1: Fix Dataset Folder Names
-If your training folders have extended names (e.g., `adenocarcinoma_left.lower.lobe_T2_N0_M0_Ib`):
-```bash
-python fix_dataset_names.py
-```
-This will rename folders to match test folder structure and map extended names to base cancer types.
-
-### Step 2: Verify Dataset Structure
-Ensure your dataset follows this structure:
-```
-DATASET/
-├── train/
-│   ├── adenocarcinoma/
-│   ├── large.cell.carcinoma/
-│   ├── normal/
-│   └── squamous.cell.carcinoma/
-├── valid/
-│   ├── adenocarcinoma/
-│   ├── large.cell.carcinoma/
-│   ├── normal/
-│   └── squamous.cell.carcinoma/
-└── test/
-    ├── adenocarcinoma/
-    ├── large.cell.carcinoma/
-    ├── normal/
-    └── squamous.cell.carcinoma/
-```
-
-## Training the Model
-
-### Quick Start Training
-```bash
-python train_model.py
-```
-
-### Training Features
-- **Transfer Learning**: Pre-trained EfficientNet-B4
-- **Focal Loss**: Handles class imbalance (α=1, γ=2)
-- **AdamW Optimizer**: Better generalization (weight decay 0.01)
-- **Learning Rate Scheduling**: ReduceLROnPlateau
-- **Early Stopping**: Patience of 5 epochs
-- **Automatic Checkpointing**: Saves best model
-
-### Training Configuration
-Edit `train_model.py` to customize:
-```python
-config = {
-    'epochs': 30,
-    'batch_size': 16,
-    'learning_rate': 0.001,
-    'weight_decay': 0.01,
-    'patience': 5,
-}
-```
-
-### Training Output
-- Model saved to: `models/best_model.pth`
-- Confusion matrix: `confusion_matrix.png`
-- Training logs: `training_YYYYMMDD_HHMMSS.log`
-- Accuracy curves: `accuracy_curve.png`, `loss_curve.png`
-- Class-wise accuracy: `class_wise_accuracy.png`, `cancer_accuracy_barplot.png`
-
-## Running the Application
-
-### 1. Initialize Database
-Database auto-created on first run. No default user is created.
-Register a new account via the registration page on first access.
-
-### 2. Start Flask Server
-```bash
+git clone https://github.com/samalarakshithbabu/flask-expense-tracker.git
+cd flask-expense-tracker
+pip install flask
 python app.py
+# Opens at http://localhost:5000
 ```
-Application available at: `http://localhost:5000`
-
-### 3. Access the Application
-1. Open browser to `http://localhost:5000`
-2. Login with credentials or register new account
-3. Upload CT scan images for prediction
-4. View results and medical reports
-
-## Features Guide
-
-### User Authentication
-- **Registration**: Create new user accounts
-- **Login**: Secure password-based authentication
-- **Password Reset**: OTP-based password recovery
-- **Session Management**: Secure session handling
-
-### Prediction
-1. Navigate to Prediction page
-2. Upload CT scan image (PNG, JPG, JPEG)
-3. View classification results with confidence scores
-4. Download comprehensive medical report
-
-### Performance Metrics
-- Overall accuracy
-- Per-class precision, recall, F1-score
-- Confusion matrix visualization
-- Class-wise performance breakdown
-
-## API Endpoints
-
-### Authentication
-- `POST /register` - Register new user
-- `POST /login` - User login
-- `GET /logout` - User logout
-- `POST /send-otp` - Send OTP for password reset
-- `POST /verify-otp` - Verify OTP
-- `POST /reset-password` - Reset password
-
-### Prediction
-- `POST /predict` - Upload image and get prediction
-- `GET /performance` - View model performance metrics
-
-## Model Architecture
-
-### EfficientNet-B4
-- **Input Size**: 380x380 pixels
-- **Parameters**: ~19M
-- **Architecture**: Compound scaling (depth, width, resolution)
-- **Transfer Learning**: ImageNet pre-trained weights
-- **Custom Head**: 4-class classification layer
-
-### Training Strategy
-1. **Data Augmentation**: Random flips, rotations, color jitter
-2. **Focal Loss**: α=1, γ=2 for class imbalance
-3. **Optimizer**: AdamW with weight decay 0.01
-4. **Learning Rate**: 0.001 with ReduceLROnPlateau
-5. **Early Stopping**: Patience of 5 epochs
-
-## Troubleshooting
-
-| Issue | Solution |
-|-------|----------|
-| CUDA Out of Memory | Reduce batch size in `train_model.py` to 8 or 4 |
-| OpenAI API Errors | Check API key in `.env`; fallback reports used automatically |
-| Database Locked | Delete `users.db` and restart `python app.py` |
-| Model Not Found | Train model first: `python train_model.py` |
-
-## Production Deployment
-
-### Security Checklist
-- [ ] Change `FLASK_SECRET_KEY` in `.env`
-- [ ] Set `FLASK_ENV=production`
-- [ ] Enable HTTPS
-- [ ] Use production database (PostgreSQL recommended)
-- [ ] Configure proper logging
-- [ ] Set up backup strategy
-- [ ] Implement rate limiting
-- [ ] Add CSRF protection
-
-### Recommended Stack
-- **Web Server**: Gunicorn or uWSGI
-- **Reverse Proxy**: Nginx
-- **Database**: PostgreSQL
-- **Caching**: Redis
-- **Monitoring**: Prometheus + Grafana
 
 ---
 
-## Author
+## 📡 API Endpoints
 
-**SAMALA RAKSHITH BABU**  
-
-**Contact:**  
-- Email: samalarakshithbabu7@gmail.com  
-- LinkedIn: https://www.linkedin.com/in/samala-rakshith-babu/  
-- GitHub: https://github.com/samalarakshithbabu  
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/` | View all expenses |
+| POST | `/add` | Add new expense (JSON) |
+| GET | `/api/expenses` | Get all expenses (JSON) |
 
 ---
 
-## License
+## ⚠️ Limitations
 
-This project is for educational and research purposes only. Not intended for clinical use without proper validation and regulatory approval.
+| Limitation | Description |
+|------------|-------------|
+| **No Authentication** | Anyone can access |
+| **No Edit/Delete** | Expenses cannot be modified |
+| **Single User** | No multi-tenant support |
 
-## Acknowledgments
+---
 
-- EfficientNet architecture by Google Research
-- PyTorch deep learning framework
-- Flask web framework
-- OpenAI GPT for medical report generation
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+## 👨‍💻 Author
+
+**SAMALA RAKSHITH BABU**
+
+- 📧 Email: samalarakshithbabu7@gmail.com
+- 💼 LinkedIn: [samala-rakshith-babu](https://www.linkedin.com/in/samala-rakshith-babu/)
+- 🐙 GitHub: [samalarakshithbabu](https://github.com/samalarakshithbabu)
